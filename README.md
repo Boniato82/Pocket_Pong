@@ -16,16 +16,11 @@ What's CHANGED
     Field of play now fills all gameboy screen (160x144).
     Score points now are on the field, change design of score numbers.
     CPU Paddle now only moves when PLAYER Paddle hits the ball (IMO it's better for gameplay)
-
-What's REMOVED
-
-    Removed intro and initial credit screens. Now it's just run & play.
-    Removed the requirement of pressing START for starting the game and after each point.
-
+    
 What's ADDED
-
+    Final score at the end of the game, based on Player & CPU points.
     Middle Net, like original Arcade game.
-    PAUSE (press START Buttonn). I know it's somewhat buggy.
+    PAUSE (press START Buttonn).
     CHANGE DIFFICULTY on game. Press SELECT.
     3 Speeds for your paddle: Normal (Press Up & Down) / SLOW (Up & Down + B button) / FAST (Up & Down + A Button)
     Ball speed Increases over time. No boring gameplay! Just wait and It will be faster and faster.
