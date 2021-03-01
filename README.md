@@ -18,6 +18,7 @@ What's CHANGED
     CPU Paddle now only moves when PLAYER Paddle hits the ball (IMO it's better for gameplay)
     
 What's ADDED
+
     Final score at the end of the game, based on Player & CPU points.
     Middle Net, like original Arcade game.
     PAUSE (press START Buttonn).
