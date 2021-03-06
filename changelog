@@ -1,11 +1,13 @@
 ************************
 CHANGELOG FOR POCKET PONG
 ************************
-
+Version 1.2
+    Some Bug fixes
+    Changed physics of the ball.
+    
 Version 1.1
-
     Add score.
     Now in Hardcore mode CPU uses 2 paddles.
 
 Version 1.0
--Initial release.
+    Initial release.
