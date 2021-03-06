@@ -77,95 +77,6 @@ unsigned const char spritetiles[] = {
 0x52, 0x52, 0x14, 0x04, 0x14, 0x04, 0x10, 0x10
 };
 
-
-char collision_left_up[] = {
-	3,-1,1,0,
-	3,-1,1,0,
-	3,-1,1,0,
-	3,-1,1,0,
-	//--
-	3,-1,2,-1,
-	3,-1,2,-1,
-	3,-1,2,-1,
-	3,-1,2,-1,
-	//--
-	3,-2,2,-1,
-	3,-2,2,-1,
-	3,-2,2,-1,
-	3,-2,2,-1,
-	//--
-	3,-2,2,-1,
-	3,-2,2,-1,
-	3,-2,2,-1,
-	3,-2,2,-1
-};
-
-char collision_left_down[] = {
-	3,1,1,0,
-	3,1,1,0,
-	3,1,1,0,
-	3,1,1,0,
-	//--
-	3,1,2,1,
-	3,1,2,1,
-	3,1,2,1,
-	3,1,2,1,
-	//--
-	3,2,2,1,
-	3,2,2,1,
-	3,2,2,1,
-	3,2,2,1,
-	//--
-	3,2,3,1,
-	3,2,3,1,
-	3,2,3,1,
-	3,2,3,1
-};
-
-char collision_right_up[] =  {
-	-3,-1,-1,0,
-	-3,-1,-1,0,
-	-3,-1,-1,0,
-	-3,-1,-1,0,
-	//--
-	-3,-1,-2,-1,
-	-3,-1,-2,-1,
-	-3,-1,-2,-1,
-	-3,-1,-2,-1,
-	//--
-	-3,-2,-2,-1,
-	-3,-2,-2,-1,
-	-3,-2,-2,-1,
-	-3,-2,-2,-1,
-	//--
-	-3,-2,-3,-1,
-	-3,-2,-3,-1,
-	-3,-2,-3,-1,
-	-3,-2,-3,-1
-};
-
-char collision_right_down[] = {
-	-3,1,-1,0,
-	-3,1,-1,0,
-	-3,1,-1,0,
-	-3,1,-1,0,
-	//--
-	-3,1,-2,1,
-	-3,1,-2,1,
-	-3,1,-2,1,
-	-3,1,-2,1,
-	//--
-	-3,2,-2,1,
-	-3,2,-2,1,
-	-3,2,-2,1,
-	-3,2,-2,1,
-	//--
-	-3,2,-3,1,
-	-3,2,-3,1,
-	-3,2,-3,1,
-	-3,2,-3,1
-};
-
 //variables globales del programa.
 UBYTE counter,y1,y1b,y2,y2b,y3,y3b,y4,y5,y6;
 UBYTE ball_pos_x;
@@ -198,10 +109,13 @@ UBYTE incremento;
 BYTE golpea; //determina quién ha golpeado la bola, para el movimiento de la CPU (si golpea ella no se mueve hasta que golpee el jugador)
 UBYTE inicio = 0; //determina cómo se inicia la bola tras cada punto ganado.
 BYTE controller = 0;
-int score = 0;
+long score = 0;
+BYTE randomY1 = 0;
+BYTE randomX1 = 0;
+BYTE randomX2 = 0;
 
 // funciones del programa.
-int RESET_COORDS();
+int REINICIAR_COORDENADAS();
 int COLISIONES();
 int CONTROLES();
 int CARGAR_ELEMENTOS();
@@ -217,7 +131,10 @@ void INIT_REGISTERS_SOUND_EFECTS(void);
 
 
 int main(void){
-	initrand(DIV_REG);
+	UWORD seed = 0;
+	seed = DIV_REG;
+	seed |= (UWORD)DIV_REG << 8;
+	initarand(seed);
 	CARGAR_ELEMENTOS();
 	//Control del programa.
 	while(1) {
@@ -272,7 +189,7 @@ int CARGAR_ELEMENTOS(){
 	initarand(255); //inicia el RAND aleatorio.
 	BGP_REG = 0x27U;
 	///// TERMINA EL BLOQUE BITMAP DONDE SE MUESTRA EL TEXTO DEL JUEGO.
-	RESET_COORDS();
+	REINICIAR_COORDENADAS();
 	
 	//fijar las puntuaciones a cero.
 	score_p1 = 0;
@@ -368,7 +285,7 @@ void PLAY_LR_WALL_SOUND_EFFECT(void){
 	NR51_REG = 0xF7;
 }
 
-int RESET_COORDS(){
+int REINICIAR_COORDENADAS(){
 	//pos inicial paddle0.
 	y1 = 65;
 	y2 = 73;
@@ -437,8 +354,8 @@ counter = joypad();
 				printf(" \n");
 				printf(" \n");
 				printf("\n\n    Prepare for");
-				printf("\n\n     HARD MODE");
-				delay(3000);
+				printf("\n\n   HARDCORE MODE");
+				delay(3500);
 				gotoxy(0, 0);
 				printf(" \n");
 				printf(" \n");
@@ -476,13 +393,8 @@ counter = joypad();
 }
 
 int COLISIONES(){
-UBYTE colrandom; //numero aleatorio respecto a las colisiones
-
 		//colisiones con paddle del jugador
-		if((ball_pos_y >= (y1-8) && ball_pos_y <= (y3+8)) && ball_pos_x <= 23){
-			do { 
-			colrandom = rand() % 16;
-			} while (colrandom > 16);
+		if(ball_pos_y >= (y1-8) && ball_pos_y <= (y3+8) && ball_pos_x <= 23){
 			
 			golpea=0;//golpea el jugador así que se mueve.
 			while(temp1!=0 || temp2!=0){
@@ -504,23 +416,32 @@ UBYTE colrandom; //numero aleatorio respecto a las colisiones
 				}
 			}
 			PLAY_PADDLE_SOUND_EFFECT();
-			if(ball_vector_y1<0 || ball_vector_y2<0) col_table = collision_left_up;
-			// la bola se desplaza abajo.
-			else col_table = collision_left_down;
-				col_table+=colrandom*4;
-				ball_vector_x1 = *col_table + (incremento/6);
-				ball_vector_y1 = *(col_table+1) + (incremento/6);
-				ball_vector_x2 = *(col_table+2) ;
-				ball_vector_y2 = *(col_table+3) ;
+					do { 
+						randomX1 = (rand() % 3) +1;
+					} while (randomX1 <= 2 || randomX1 >= 5);
+					ball_vector_x1 = randomX1 + (incremento/6); //entre 1 y 3.
+				
+					do { 
+						randomX2 = (rand() % 3) +1;
+					} while (randomX2 <= 0 || randomX2 >= 4);
+					ball_vector_x2 = randomX2; //1 a 3
+				
+					do { 
+						randomY1 = (rand() % 5) -2;
+					} while ((randomY1 <= -4 || randomY1 >= 4));  //
+					ball_vector_y1 = randomY1; //entre -3 y 3
+				
+					if (ball_vector_y1 < 0) ball_vector_y2 = ball_vector_y1 + 1;  //de -1 a 1
+					else if (ball_vector_y1 > 0) ball_vector_y2 = ball_vector_y1 - 1;
 				incremento++;
-		colrandom = 0;
+	
 		}
 	
 		//colisiones con paddle CPU
-		if((ball_pos_y >= (y4-8) && ball_pos_y <= (y6+8)) && ball_pos_x >= 145){
-			do { 
-				colrandom = rand() % 16;
-				} while (colrandom > 16);
+		if(ball_pos_y >= (y4-8) && ball_pos_y <= (y6+8) && ball_pos_x >= 148){
+			randomX1 = 0;
+			randomX2 = 0;
+			randomY1 = 0;
 			golpea=1;//golpea el CPU así que NO se mueve.
 			while(temp1!=0 || temp2!=0){
 				if(temp1 > 0){
@@ -541,24 +462,28 @@ UBYTE colrandom; //numero aleatorio respecto a las colisiones
 				}
 			}
 			PLAY_PADDLE_SOUND_EFFECT();
-			// la bola se desplaza arriba.
-			if(ball_vector_y1<0 || ball_vector_y2<0) col_table = collision_right_up;
-			// la bola se desplaza abajo.
-			else col_table = collision_right_down;
-			col_table+=1*4;
-			ball_vector_x1 = *col_table - (incremento/6);
-			ball_vector_y1 = *(col_table+1) - (incremento/6);
-			ball_vector_x2 = *(col_table+2) ;
-			ball_vector_y2 = *(col_table+3) ;
-						incremento++;
-		colrandom = 0;
+					do { 
+						randomX1 = (rand() % 3) -3;
+					} while (randomX1 < -3 || randomX1 > -1);
+					ball_vector_x1 = randomX1 - (incremento/6); //entre -1 y -3.
+				
+					do { 
+						randomX2 = (rand() % 3) -3;
+					} while (randomX2 < -3 || randomX2 > -1);
+					ball_vector_x2 = randomX2; //-1 a -3
+				
+					do { 
+						randomY1 = (rand() % 6) -2;
+					} while ((randomY1 < -3 || randomY1 > 3));  //
+					ball_vector_y1 = randomY1; //entre -3 y 3
+				
+					if (ball_vector_y1 < 0) ball_vector_y2 = ball_vector_y1 + 1;  //de -1 a 1
+					else if (ball_vector_y1 > 0) ball_vector_y2 = ball_vector_y1 - 1;
+				incremento++;
 		}
 		
 		//colisiones con paddle EXTRA CPU
 		if((ball_pos_y >= (y5-8) && ball_pos_y <= (y5+8)) && Dificultad == 1 && ball_pos_x >= 90 && ball_pos_x <= 93){
-			do { 
-				colrandom = rand() % 16;
-				} while (colrandom > 16);
 			golpea=1;//golpea el CPU así que NO se mueve.
 			while(temp1!=0 || temp2!=0){
 				if(temp1 > 0){
@@ -579,24 +504,29 @@ UBYTE colrandom; //numero aleatorio respecto a las colisiones
 				}
 			}
 			PLAY_PADDLE_SOUND_EFFECT();
-			// la bola se desplaza arriba.
-			if(ball_vector_y1<0 || ball_vector_y2<0) col_table = collision_right_up;
-			// la bola se desplaza abajo.
-			else col_table = collision_right_down;
-			col_table+=1*4;
-			ball_vector_x1 = *col_table - (incremento/6);
-			ball_vector_y1 = *(col_table+1) - (incremento/6);
-			ball_vector_x2 = *(col_table+2) ;
-			ball_vector_y2 = *(col_table+3) ;
-						incremento++;
-		colrandom = 0;
+			do { 
+						randomX1 = (rand() % 3) -3;
+					} while (randomX1 < -3 || randomX1 > -1);
+					ball_vector_x1 = randomX1 - (incremento/6); //entre -1 y -3.
+				
+					do { 
+						randomX2 = (rand() % 3) -3;
+					} while (randomX2 < -3 || randomX2 > -1);
+					ball_vector_x2 = randomX2; //-1 a -3
+				
+					do { 
+						randomY1 = (rand() % 5) -2; //que el paddle extra del CPU no golpee tan inclinado.
+					} while ((randomY1 < -2 || randomY1 > 2));  //
+					ball_vector_y1 = randomY1; //entre -2 y 2
+					
+					ball_vector_y2 = 0;
+				incremento++;
 		}
-
-
+		
 		// detección de colisiones.
 		// pared izquierda. //CPU gana un punto.
 		if(ball_pos_x<20){
-			RESET_COORDS();
+			REINICIAR_COORDENADAS();
 			score_p2+=2;
 			score_counter_p2+=2;
 			PLAY_UL_WALL_SOUND_EFFECT();
@@ -606,8 +536,8 @@ UBYTE colrandom; //numero aleatorio respecto a las colisiones
 			score -= 6;  //restamos puntos al total
 		}
 		// pared derecha. //el jugador gana un punto.
-		if(ball_pos_x>148){ 
-			RESET_COORDS();
+		if(ball_pos_x>150){ 
+			REINICIAR_COORDENADAS();
 			score_p1+=2;
 			score_counter_p1+=2;
 			PLAY_UL_WALL_SOUND_EFFECT();
@@ -708,13 +638,15 @@ int FINAL_JUEGO(){
 				HIDE_SPRITES;
 				BGP_REG = 0x27U;
 				if (score_counter_p1 == 20){
-				if (score_p2 == 0) score+=230;
+				if ((score_p2 == 0 || score_counter_p2 == 0) && Dificultad == 1) score+=230;
+				gotoxy(0,0);
 				printf(" \n \n \n \n \n \n");
 				printf("     YOU WIN\n");
 				printf("     Score: %d", score);
+
 				}
 				if (score_counter_p2 == 20){
-				gotoxy(0, 0);
+				gotogxy(0, 0);
 				printf(" \n \n \n \n \n \n");
 				printf("     YOU LOSE\n");
 				printf("     Score: %d", score);
@@ -724,7 +656,7 @@ int FINAL_JUEGO(){
 				printf(" \n \n \n \n \n \n");
 				printf("                \n");
 				printf("                  ");
-				RESET_COORDS();
+				REINICIAR_COORDENADAS();
 				score=0;
 				controller = 0;
 			}
