@@ -5,7 +5,7 @@ Based on Ping-Pong Diplomacy by jduranmaster.
 
 First of all I would like to thank jduranmaster for his code and effort. I'm not a developer, I just know a bit of C/C++, so I thought I could change/improve certain aspects of Ping-Pong Democracy with time and trying to understand source code.
 
-It's so sad that there wasn't an official pong game for Game Boy, so this is my contribution, because I love Game Boy AND Pong game.
+Anyway, it's so sad that there wasn't an official pong game for original Game Boy (DMG, Pocket, Light), so this is my contribution, because I love Game Boy AND Pong game.
 
 Here are the changes over original version:
 
