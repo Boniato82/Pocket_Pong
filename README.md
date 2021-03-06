@@ -23,5 +23,5 @@ What's ADDED
     Middle Net, like original Arcade game.
     PAUSE (press START Buttonn).
     CHANGE DIFFICULTY on game. Press SELECT.
-    3 Speeds for your paddle: Normal (Press Up & Down) / SLOW (Up & Down + B button) / FAST (Up & Down + A Button)
+    3 Speeds for your paddle: Normal (Press Up & Down) / SLOW (Up & Down + B button) / FAST (Up & Down + A Button) <- not yet :P
     Ball speed Increases over time. No boring gameplay! Just wait and It will be faster and faster.
