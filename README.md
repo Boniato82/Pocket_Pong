@@ -17,7 +17,7 @@ CONTROLS & INSTRUCTIONS
 
 ******************************
 What's ADDED FROM CLASSIC GAME
-******************************1
+******************************
     - Final score at the end of the game, based on Player & CPU points.
     - PAUSE (press START Buttonn).
     - CHANGE DIFFICULTY on game (NORMAL/HARDCORE MODE). Press SELECT.
