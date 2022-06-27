@@ -1,6 +1,10 @@
 ************************
 CHANGELOG FOR POCKET PONG
 ************************
+Version 1.3
+    Bug fixes for Score
+    Soft Reset (A+B+Select while playing)
+    
 Version 1.2
     Some Bug fixes
     Changed physics of the ball.
