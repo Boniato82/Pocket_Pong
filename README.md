@@ -1,4 +1,4 @@
-# Pocket-Pong
+# Pocket_Pong
 Pocket Pong (Pong for original Game Boy) by Boniato82. Using C language and GBDK.
 
 Based on Ping-Pong Diplomacy by jduranmaster.
