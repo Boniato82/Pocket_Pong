@@ -1,5 +1,5 @@
 /*Pocket Pong by Boniato82
-//	based on Ping Pong Diplomacy for GameBoy. Programmed by jduranmaster
+//	
 */
 
 #include <gb/gb.h>
