@@ -1,4 +1,8 @@
 # Pocket_Pong
+
+![alt text](https://github.com/Boniato82/Pocket_Pong/blob/main/Pocket-Pong.png?raw=true)
+
+
 Pocket Pong (Pong for original Game Boy) by Boniato82. Using C language and GBDK.
 
 I'm not a developer, I just know a bit of C/C++, so I thought I could change/improve certain aspects of Classic Pong with time and trying to understand source code.
