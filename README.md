@@ -12,7 +12,7 @@ CONTROLS & INSTRUCTIONS
     - Press Start to pause the game.
     - Press A+B+Select while playing to return to main screen (soft reset) 
 
-*******1***********************
+******************************
 What's ADDED FROM CLASSIC GAME
 ******************************
     - Final score at the end of the game, based on Player & CPU points. 
