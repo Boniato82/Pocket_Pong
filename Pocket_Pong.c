@@ -1,5 +1,5 @@
 /*Pocket Pong by Boniato82
-//	
+//
 */
 
 #include <gb/gb.h>
@@ -81,29 +81,29 @@ unsigned const char spritetiles[] = {
 };
 
 //variables globales del programa.
-UINT8 EmpiezaJuego;
-UINT8 presionado; //para usar con los controles.
-UINT8 y1,y2,y3,y4,y5,y6;
-UINT8 ball_pos_x;
-UINT8 ball_pos_y;
-UINT8 Paddle0_pos_x; //posicion x,y del paddle del jugador
-UINT8 Paddle0_pos_y;
-UINT8 Paddle1_pos_x;  //posicion x,y del paddle del CPU
-UINT8 Paddle1_pos_y;
-INT8 ball_vector_x1;
-INT8 ball_vector_y1;
-UINT8 game_status;
-UINT8 score_counter_p1;
-UINT8 score_counter_p2;
-UINT8 Pausa; 
-INT8 Dificultad; //0 = normal mode 1 = hardcore mode 
-UINT8 incremento; //incremento de la velocidad del vector x de la bola.
-INT8 golpea; //determina quién ha golpeado la bola, para el movimiento de la CPU (si golpea ella no se mueve hasta que golpee el jugador)
-UINT8 inicio_direccion; //determina la dirección de la bola tras cada punto ganado.
-UINT8 inicio_y; //determina la posición Y de la bola tras cada punto ganado.
-INT16 score;
-UINT16 seed; //semilla para numeros aleatorios.
-UINT8 i; //numero para los for
+uint8_t EmpiezaJuego;
+uint8_t presionado; //para usar con los controles.
+uint8_t y1,y2,y3,y4,y5,y6;
+uint8_t ball_pos_x;
+uint8_t ball_pos_y;
+uint8_t Paddle0_pos_x; //posicion x,y del paddle del jugador
+uint8_t Paddle0_pos_y;
+uint8_t Paddle1_pos_x;  //posicion x,y del paddle del CPU
+uint8_t Paddle1_pos_y;
+int8_t ball_vector_x1;
+int8_t ball_vector_y1;
+uint8_t game_status;
+uint16_t score_counter_p1;
+uint16_t score_counter_p2;
+uint8_t Pausa; 
+uint8_t Dificultad; //0 = normal mode 1 = hardcore mode 
+uint8_t incremento; //incremento de la velocidad del vector x de la bola.
+int8_t golpea; //determina quién ha golpeado la bola, para el movimiento de la CPU (si golpea ella no se mueve hasta que golpee el jugador)
+uint8_t inicio_direccion; //determina la dirección de la bola tras cada punto ganado.
+uint8_t inicio_y; //determina la posición Y de la bola tras cada punto ganado.
+uint16_t score;
+uint16_t seed; //semilla para numeros aleatorios.
+uint8_t i; //numero para los for
 
 // funciones del programa.
 void REINICIAR_COORDENADAS(void);
@@ -119,23 +119,24 @@ void PLAY_PADDLE_SOUND_EFFECT(void);
 void PLAY_UL_WALL_SOUND_EFFECT(void);
 void PLAY_LR_WALL_SOUND_EFFECT(void);
 void INIT_REGISTERS_SOUND_EFECTS(void);
-void LIMPIA_PANTALLA(void);
+void LIMPIA_TEXTO(void);
 void SET_SPRITES(void);
 void PULSA_SELECT(void);
 void PANTALLA_INICIAL(void);
+void INTRO(void); //logo de Boniato82
 void OCULTAR_SPRITES(void);
 
 void main(void){
 	CARGAR_ELEMENTOS();
 	CARGAR_SPRITES();
 	SET_SPRITES();
+	INTRO();
 	PANTALLA_INICIAL();
-	//Control del programa.
 	while(1) {
-		color(BLACK, WHITE, SOLID);
+		//color(BLACK, WHITE, SOLID);
 		wait_vbl_done();
 		Paddle0_pos_y = y2; //posiciones y de ambos paddles. 
-		Paddle1_pos_y = y5;
+		Paddle1_pos_y = y5;	
 		SET_SPRITES();
 		CONTROLES();
 		FINAL_JUEGO();
@@ -150,11 +151,10 @@ void CARGAR_ELEMENTOS(void){
 	seed = 0;
 	inicio_direccion = 0; //determina cómo se inicia la bola tras cada punto ganado.
 	inicio_y = 0;
-	score = 0;
 	seed = DIV_REG;
 	EmpiezaJuego = 0;
 	ball_pos_y = 0;
-	seed |= (UINT16)DIV_REG << 8;
+	seed |= (uint16_t)DIV_REG << 8;
 	initarand(seed);
 	OBP0_REG = 0xE0;  //cambiar paleta de Gameboy para que el blanco no sea el color transparente.
 	initarand(255); //inicia el RAND aleatorio.
@@ -211,6 +211,9 @@ void CARGAR_SPRITES(void){
 	//flecha de selección PANTALLA_INICIO
 	set_sprite_data(25, 1, spritetiles+400);
 
+}
+
+void SET_SPRITES(void){
 	//paddle 0. Controlada por el usuario.
 	set_sprite_tile(0,0);
 	set_sprite_tile(1,0);
@@ -222,11 +225,6 @@ void CARGAR_SPRITES(void){
 	set_sprite_tile(5,0);
 	//bola.
 	set_sprite_tile(6,1);
-	
-	
-}
-
-void SET_SPRITES(void){
 	set_sprite_tile(7,2+(score_counter_p1*2)); //puntuacion player 1
 	set_sprite_tile(8,3+(score_counter_p1*2)); //puntuacion player 1
 	set_sprite_tile(9,2+(score_counter_p2*2)); // puntuacion CPU
@@ -260,78 +258,108 @@ void PANTALLA_INICIAL(void){
 	score_counter_p1 = 0;
 	score_counter_p2 = 0;
 	i = 0;
-	Dificultad = 0;
+	Dificultad = 0; //modo classic por defecto
 	do
 {
 		gotoxy(0, 0);
 		puts(" \n");
 		puts(" \n");
-		puts(" \n");
-		puts("    POCKET PONG\n\n\n");
-		puts("    Normal mode\n");
-		puts("   Hardcore mode");
-		if (Dificultad == 0) move_sprite(31,28,96);	//pintar la flecha de la Dificultad
-		else move_sprite(31,20,112);
+		puts("    POCKET PONG\n\n\n\n");
+		puts("*------------------*");
+		puts("| Classic  Hardcore|");
+		puts("|     Ultimate     |");
+		puts("*------------------*");
+		if (Dificultad == 0) move_sprite(31,16,104);	//pintar la flecha de la Dificultad
+		else if (Dificultad == 1) move_sprite(31,88,104);
+		else if (Dificultad == 2) move_sprite(31,48,120);
 		if (joypad() & J_SELECT){
 			switch (Dificultad){
 			case 0:
-				Dificultad = 1;
-				move_sprite(31,20,112);
+				Dificultad = 1; //cambia a hardcore
+				move_sprite(31,88,104);
 			break;
 			case 1:
-				Dificultad = 0; //dificultad normal
-				move_sprite(31,28,96);
+				Dificultad = 2; //cambia a ultimate
+				move_sprite(31,48,120);
 			break;
+			case 2:
+				Dificultad = 0; //cambia a classic
+				move_sprite(31,16,104);
+			break;
+				
 		}
-		delay(250);		
+		delay(275);		
 		}
 		if (joypad() & J_START) {
 			EmpiezaJuego = 1;
 			switch (Dificultad){
-				case 0: //normal
+				case 0: //classsic
 				for (i= 0; i<5; i++ ) {
 					gotoxy(0, 0);
 					puts(" \n");
 					puts(" \n");
-					puts(" \n");
-					puts("    POCKET PONG\n\n\n");
-					puts("                      \n");
+					puts("    POCKET PONG\n\n\n\n");
+					puts("                       ");
+					puts("                       ");
+					puts("                       ");
+					puts("                       ");
 					delay(140);
 					gotoxy(0, 0);
 					puts(" \n");
 					puts(" \n");
-					puts(" \n");
-					puts("    POCKET PONG\n\n\n");
-					puts("    Normal mode\n");
+					puts("    POCKET PONG\n\n\n\n\n\n");
+					puts("  Classic");
 					delay(140);
 				}	
 				break;
-				case 1:
+				case 1: //hardcore
 				for (i= 0; i<5; i++ ) {
 					gotoxy(0, 0);
 					puts(" \n");
 					puts(" \n");
-					puts(" \n");
-					puts("    POCKET PONG\n\n\n");
-					puts("    Normal mode\n");
-					puts("                 ");
+					puts("    POCKET PONG\n\n\n\n");
+					puts("                       ");
+					puts("                       ");
+					puts("                       ");
+					puts("                       ");
 					delay(140);
 					gotoxy(0, 0);
 					puts(" \n");
 					puts(" \n");
-					puts(" \n");
-					puts("    POCKET PONG\n\n\n");
-					puts("\n");
-					puts("   Hardcore mode");
+					puts("    POCKET PONG\n\n\n\n\n\n");
+					puts("           Hardcore");
 					delay(140);
 				}
 				break;	
+				case 2: //ultimate
+				for (i= 0; i<5; i++ ) {
+					gotoxy(0, 0);
+					puts(" \n");
+					puts(" \n");
+					puts("    POCKET PONG\n\n\n\n");
+					puts("                       ");
+					puts("                       ");
+					puts("                       ");
+					puts("                       ");
+					delay(140);
+					gotoxy(0, 0);
+					puts(" \n");
+					puts(" \n");
+					puts("    POCKET PONG\n\n\n\n\n\n");
+					puts("                \n");
+					puts("      Ultimate");
+					delay(140);
+				}
+				break;
 		}
 	}
 } 
 while (EmpiezaJuego != 1); //esperamos a que se haya pulsado start
+if (Dificultad == 2){ //si elegimos hardcore, CPU tiene ya 9 puntos de ventaja sobre 10.
+score_counter_p2 = 9;
+}
 move_sprite(31,0,0); //ocultamos la flecha.
-LIMPIA_PANTALLA();
+LIMPIA_TEXTO();
 }
 
 void INIT_REGISTERS_SOUND_EFECTS(void){
@@ -404,7 +432,7 @@ presionado = joypad();
 				SPRITES_8x8;
 				EmpiezaJuego = 0;
 				OCULTAR_SPRITES();
-				delay(500);
+				delay(750);
 				SHOW_SPRITES;
 				Dificultad = 0;
 				PANTALLA_INICIAL();
@@ -449,9 +477,9 @@ presionado = joypad();
 		}
 		
 		if (presionado & J_START && game_status == 1){ //poner el juego en pausa pulsando START
-				delay(250);
+				delay(275);
 			waitpad(J_START);
-			delay(250);	
+			delay(275);	
 			}		
 }
 
@@ -586,20 +614,20 @@ void FINAL_JUEGO(void){
 	if(score_counter_p1 == 10 || score_counter_p2 == 10){ //fin del juego.
 				HIDE_SPRITES;
 				BGP_REG = 0x27U;
-				score = ((score_counter_p1*100) - (score_counter_p2*9));
+				score = ((score_counter_p1*75) - (score_counter_p2*9));
 				if (score <= 0) score = 0;
 				if (score_counter_p1 == 10){
 					gotoxy(0,0);
 					printf(" \n \n \n \n \n \n");
 					printf("     YOU WIN\n\n");
-					printf("     Score:%d", (UINT16)score);
+					printf("     Score:%d", score);
 
 				}
 				if (score_counter_p2 == 10){
 					gotogxy(0, 0);
 					printf(" \n \n \n \n \n \n");
 					printf("     YOU LOSE\n\n");
-					printf("     Score:%d", (UINT16)score);
+					printf("     Score:%d", score);
 				}
 				delay(4000);
 				gotoxy(0, 0);
@@ -632,6 +660,7 @@ if(game_status==0){
 				score_counter_p1 = 0;
 				incremento= 0;
 				golpea = 0;
+				Dificultad = 0;
 				score = 0;
 			}	
 			inicio_direccion = rand();
@@ -652,16 +681,16 @@ if(game_status==0){
 				ball_vector_x1 = -1;
 				ball_vector_y1 = -1;
 			}
-			delay(350);
+			delay(375);
 			wait_vbl_done();
 			game_status = 1; //el juego comienza de nuevo.
 		}	
 }
 
-void LIMPIA_PANTALLA(void) {
+void LIMPIA_TEXTO(void) {
 	gotoxy(0,0); 
-      printf("\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n");
-    gotoxy(0,0);  
+	printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+   	gotoxy(0,0);  
 }
 
 void OCULTAR_SPRITES(void) { //oculta todos los sprites menos la flecha para la pantalla de inicio.
@@ -670,4 +699,158 @@ void OCULTAR_SPRITES(void) { //oculta todos los sprites menos la flecha para la 
 	move_sprite(i,0,0);	//asignamos coordenadas 0,0 a cada sprite.
 	}
 	wait_vbl_done();
+}
+
+void INTRO(void){
+	gotoxy(0,7);
+	printf("     with love\n");
+	gotoxy(0,8);
+	printf("                  fr");
+	gotoxy(0,8);
+	delay(50);
+	printf("               ");
+	gotoxy(0,8);
+	printf("                from");
+	gotoxy(0,8);
+	delay(50);
+	printf("                ");
+	gotoxy(0,8);
+	printf("              from B");
+	gotoxy(0,8);
+	delay(50);
+	printf("              ");
+	gotoxy(0,8);
+	printf("            from Bon");
+	gotoxy(0,8);
+	delay(50);
+	printf("                ");
+	gotoxy(0,8);
+	printf("           from Bonia");
+	gotoxy(0,8);
+	delay(50);
+	printf("               ");
+	gotoxy(0,8);
+	printf("        from Boniato");
+	gotoxy(0,8);
+	delay(50);
+	printf("                ");
+	gotoxy(0,8);
+	printf("      from Boniato82");
+	gotoxy(0,8);
+	delay(50);
+	printf("                      ");
+	gotoxy(0,8);
+	printf("     from Boniato82");
+	gotoxy(0,8);
+	delay(50);
+	printf("                     ");
+	gotoxy(0,8);
+	printf("   from Boniato82");
+	gotoxy(0,8);
+	delay(50);
+	printf("                      ");
+	gotoxy(0,8);
+	printf("   from Boniato82");
+	gotoxy(0,8);
+	delay(50);
+	printf("                ");
+	gotoxy(0,8);
+	printf("   from Boniato82");
+	gotoxy(0,8);
+	printf("               ");
+	gotoxy(0,8);
+	printf("   from Boniato82");
+	gotoxy(0,8);
+	delay(50);
+	printf("                  ");
+	gotoxy(0,8);
+	printf("   from Boniato82");
+	gotoxy(0,8);
+	delay(50);
+	printf("                   ");
+	gotoxy(0,8);
+	printf("   from Boniato82");
+	delay(2500);
+	gotoxy(0,7);
+	printf("                    ");
+	printf("                    ");
+	gotoxy(0,6);
+	printf("     with love");
+	gotoxy(0,8);
+	printf("   from Boniato82");
+	delay(30);
+	gotoxy(0,6);
+	printf("                    ");
+	gotoxy(0,8);
+	printf("                    ");
+	gotoxy(0,5);
+	printf("     with love");
+	gotoxy(0,9);
+	printf("   from Boniato82");
+	delay(30);
+	gotoxy(0,5);
+	printf("                    ");
+	gotoxy(0,9);
+	printf("                    ");
+	gotoxy(0,4);
+	printf("     with love");
+	gotoxy(0,10);
+	printf("   from Boniato82");
+	delay(30);
+	gotoxy(0,4);
+	printf("                    ");
+	gotoxy(0,10);
+	printf("                    ");
+	gotoxy(0,3);
+	printf("     with love");
+	gotoxy(0,11);
+	printf("   from Boniato82");
+	delay(30);
+	gotoxy(0,3);
+	printf("                    ");
+	gotoxy(0,11);
+	printf("                    ");
+	gotoxy(0,2);
+	printf("     with love");
+	gotoxy(0,12);
+	printf("   from Boniato82");
+	delay(30);
+	gotoxy(0,2);
+	printf("                    ");
+	gotoxy(0,12);
+	printf("                    ");
+	gotoxy(0,1);
+	printf("     with love");
+	gotoxy(0,13);
+	printf("   from Boniato82");
+	delay(30);
+	gotoxy(0,1);
+	printf("                    ");
+	gotoxy(0,13);
+	printf("                    ");
+	gotoxy(0,0);
+	printf("     with love");
+	gotoxy(0,14);
+	printf("   from Boniato82");
+	delay(30);
+	gotoxy(0,0);
+	printf("                    ");
+	gotoxy(0,14);
+	printf("                    ");
+	gotoxy(0,15);
+	printf("   from Boniato82");
+	delay(30);
+	gotoxy(0,15);
+	printf("                    ");
+	gotoxy(0,16);
+	printf("   from Boniato82");
+	delay(30);
+	gotoxy(0,16);
+	printf("                    ");
+	gotoxy(0,17);
+	printf("   from Boniato82");
+	delay(30);
+	gotoxy(0,17);
+	printf("                    ");
+	
 }
