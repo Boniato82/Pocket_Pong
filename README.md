@@ -3,7 +3,7 @@
 ![alt text](https://github.com/Boniato82/Pocket_Pong/blob/main/Pocket-Pong.png?raw=true)
 
 
-Pocket Pong (Pong for original Game Boy) by Boniato82. Using C language and GBDK.
+Pocket Pong Version 1.0 (Pong for original Game Boy) by Boniato82. Using C language and GBDK.
 
 I'm not a developer, I just know a bit of C/C++, so I thought I could change/improve certain aspects of Classic Pong with time and trying to understand source code.
 
@@ -21,10 +21,9 @@ What's ADDED FROM CLASSIC GAME
 ******************************
     - Final score at the end of the game, based on Player & CPU points. 
     - PAUSE (press START Buttonn). 
-    - 3 Game Modes (press SELECT Button)
-        - Classic: Classic Pong. (normal)
-        - Hardcore: You against 2 Paddles! (hard)
-        - Ultimate: If Computer scores 1 point, you lose (hard) 
+    - 3 pong variants
+        - Pocket Pong: classic Pong (classic, hardcore  and ultimate difficulty)
+        - 4X Pong: play with 4 paddles (easy, normal, hardcore difficulty)
+        - Squash Pong: play solo or against CPU like squash game (solo or vs CPU modes)
     - 2 Speeds for your paddle: Normal (Press Up & Down) / FAST (Up & Down + A Button) 
     - Ball speed Increases over time. No boring gameplay! Just wait and It will be faster and faster. 
-    - Soft Reset to main screen (A+B+Select). Does not work while pausing the game.
